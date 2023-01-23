@@ -1,0 +1,33 @@
+version: "3.7"
+
+networks:
+  db:
+    driver: bridge
+
+services:
+  app:
+    container_name: app
+    ports:
+      - 8080:8080
+    build: .
+    restart: always
+    networks:
+      - db
+    depends_on:
+      - db_app
+
+  db_app:
+    container_name: db_app
+    image: postgres
+    environment:
+      - POSTGRES_DB=db_app
+      - POSTGRES_USER=app
+      - POSTGRES_PASSWORD=app
+      - PGDATA=/data/postgres
+    volumes:
+      - ./v_db_app:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - db
+    restart: unless-stopped
